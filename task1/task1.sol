@@ -10,6 +10,7 @@ contract Voting {
     function vote(address addr) public {
         candidateToVotes[version][addr]++;  
     }
+    
 
     // 一个getVotes函数，返回某个候选人的得票数
     function getVotes(address addr) public view returns(uint256) {
