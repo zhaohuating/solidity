@@ -62,10 +62,15 @@ contract BeggingContract is Ownable {
         payable(owner()).transfer(totalDonations);
         totalDonations = 0;
     }
-
+    
     // 获取捐赠
     function getDonation(address donor) external view returns (uint256) {
         return donations[donor];
     }
+
+    //获取合约地址
+    function getContractAddress() external view returns (address) {
+        return address(this);
+    }    
 
 }
