@@ -3,8 +3,6 @@ pragma solidity ^0.8.26;
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract BeggingContract is Ownable {
-
-
     // 捐款总额
     uint256 public totalDonations;
     // 捐款top3
@@ -13,9 +11,8 @@ contract BeggingContract is Ownable {
     uint256 startTime; 
     // 捐赠结束时间
     uint256 endTime;
-    // 记录每天的捐款总额
+    // 捐款信息
     mapping(address => uint256) donations;
-    mapping(uint8 => mapping (address => uint256)) donationsByDay;
     // 记录每次捐赠的地址和金额。
     event DonationReceived(address donor, uint256 amount);
 
