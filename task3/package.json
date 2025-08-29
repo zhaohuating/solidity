@@ -1,0 +1,25 @@
+{
+  "name": "task3",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx hardhat test",
+    "compile": "npx hardhat compile ",
+    "clean": "npx hardhat clean",
+    "deploy": "npx hardhat deploy --network localhost --tags deploy_nft_auction",
+    "upgrade": "npx hardhat deploy --network localhost --tags upgrade_nft_auction"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "@openzeppelin/hardhat-upgrades": "^3.9.1",
+    "hardhat": "^2.26.3",
+    "hardhat-deploy": "^1.0.4"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.4.0",
+    "@openzeppelin/contracts-upgradeable": "^5.4.0"
+  }
+}
