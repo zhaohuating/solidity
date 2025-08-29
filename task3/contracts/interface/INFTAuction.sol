@@ -1,6 +1,13 @@
 // SPDX-License-Identifier: SEE LICENSE IN LICENSE
 pragma solidity ^0.8.0;
 interface INFTAuction {
+    function createAuction(
+        address _nftAddress, 
+        uint256 _tokenID, 
+        uint256 _duration,
+        // 起拍价
+        uint256 _minBid
+        )  external;
     // 出价
     function bid(uint256 _auctionId) external payable;
     //卖家取消竞拍
