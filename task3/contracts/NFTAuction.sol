@@ -46,17 +46,10 @@ contract NFTAuction is Initializable, UUPSUpgradeable, OwnableUpgradeable, Reent
         _disableInitializers();
     }
 
-    function initialize(
-        address _seller,
-        address _nftContract,
-        uint256 _tokenId,
-        uint256 _startPrice,
-        uint256 _duration) public initializer {
+    function initialize(address _seller) public initializer {
         __Ownable_init(_seller);
         __UUPSUpgradeable_init();
         __ReentrancyGuard_init();
-        createAuction(_nftContract, _tokenId, _duration, _startPrice);
-
     }
     // 新建竞拍
     function createAuction(
@@ -65,13 +58,13 @@ contract NFTAuction is Initializable, UUPSUpgradeable, OwnableUpgradeable, Reent
         uint256 _duration,
         // 起拍价
         uint256 _minBid
-        )  internal {
+        )  external override onlyOwner {
         //检查NFT合约地址是否有效
         require(_nftAddress != address(0), "Invalid NFT contract address");
         //检查NFT的tokenId是否有效
         require(_tokenID >= 0, "Invalid token ID");
         //检查竞拍持续时间是否有效
-        require(_duration * 60 * 1000 > 10 minutes, "Duration must be greater than 10 minutes");
+        require(_duration > 1000, "Duration must be greater than 1 minutes");
         //检查起拍价是否有效
         require(_minBid > 0, "Minimum bid must be greater than 0");
 

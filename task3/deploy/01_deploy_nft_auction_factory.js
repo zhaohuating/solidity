@@ -12,8 +12,8 @@ module.exports = async ({ getNamedAccounts }) => {
   const NFTAuctionFactory = await ethers.getContractFactory("NFTAuctionFactory");
   const proxy = await upgrades.deployProxy(
     NFTAuctionFactory,
-    [deployer,
-      "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6" // NFT代理合约地址
+    [
+      "0x959922bE3CAee4b8Cd9a407cc3ac1C251C2007B1"// NFT代理合约地址
     ],               // 构造函数参数
     { initializer: "initialize", kind: "uups" }
   );

@@ -30,6 +30,7 @@ contract NFTAuctionFactory is
         
         address proxy = address(new ERC1967Proxy(auctionImpl, 
         abi.encodeWithSelector(NFTAuction.initialize.selector, msg.sender,_nftAddress,_tokenID,_minBid, _duration)));
+        INFTAuction(proxy).createAuction(_nftAddress, _tokenID, _duration, _minBid);
         allAuctions.push(proxy);
     }
 
