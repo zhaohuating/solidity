@@ -3,10 +3,6 @@ const fs   = require("fs");
 const path = require("path");
 
 module.exports = async ({ getNamedAccounts }) => {
-  const IMPLEMENTATION_SLOT = "0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc";
-const storage = await ethers.provider.getStorage("0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512", IMPLEMENTATION_SLOT);
-console.log("impl slot raw", storage);
-console.log("impl address", ethers.getAddress("0x" + storage.slice(-40)));
   const { deployer } = await getNamedAccounts();
 
     /* 1. 读取缓存里的代理地址 */
