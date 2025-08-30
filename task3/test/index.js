@@ -32,12 +32,12 @@ const { expect } = require("chai");
     //调用业务合约
     const nftAution = await ethers.getContractAt("NFTAuction", nafAutionProxy.address);
     // 创建拍卖
-    await nftAution.connect(signer1).createAuction(nftContract.target, 1, 10, ethers.parseEther("0.1"));
+    await nftAution.connect(signer1).createAuction(ethers.ZeroAddress,nftContract.target, 1, 10, ethers.parseEther("0.1"));
     const auction = await nftAution.auctions(1);
     console.log("创建拍卖成功：： ", auction);
 
     //出价
-    await nftAution.connect(buyer1).bid(1, {value: ethers.parseEther("2000")});
+    await nftAution.connect(buyer1).bid(1,0, ethers.ZeroAddress, {value: ethers.parseEther("2000")});
     const auction1 = await nftAution.auctions(1);
     console.log("出价成功：： ", auction1);
 
