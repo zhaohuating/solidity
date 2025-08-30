@@ -13,12 +13,8 @@ module.exports = async ({ getNamedAccounts }) => {
   const proxy = await upgrades.deployProxy(
     NFTAuctionFactory,
     [
-      deployer,
-      "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",// NFT代理合约地址
-      1, // tokenId
-      ethers.parseEther("0.01"), // 起拍价 0.01 ETH
-      60 * 60 * 24 // 拍卖时长 24 小时
-    ],               // 构造函数参数
+       // 构造函数参数
+    ],               
     { initializer: "initialize", kind: "uups" }
   );
   await proxy.waitForDeployment();
@@ -50,6 +46,7 @@ module.exports = async ({ getNamedAccounts }) => {
   /* 3. 让 hardhat-deploy 也记录一份（方便后续 deployments.get） */
   await deployments.save("NFTAuctionPorxy", {
     address: proxyAddress,
+    implAddress: implAddress,
     abi:     artifact.abi
   });
 

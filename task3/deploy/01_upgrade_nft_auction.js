@@ -1,5 +1,4 @@
-const { ethers, upgrades } = require("hardhat");
-const { deployments } = require("hardhat"); // 为了 deployments.save
+const {deployments, ethers, upgrades } = require("hardhat");
 const fs   = require("fs");
 const path = require("path");
 

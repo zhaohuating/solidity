@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 interface INFTAuction {
     function createAuction(
+        address _tokenAddress,
         address _nftAddress, 
         uint256 _tokenID, 
         uint256 _duration,
@@ -9,7 +10,7 @@ interface INFTAuction {
         uint256 _minBid
         )  external;
     // 出价
-    function bid(uint256 _auctionId) external payable;
+    function bid(uint256 _auctionId,uint256 _amount, address _tokenAddress) external payable;
     //卖家取消竞拍
     function cancelAuction(uint256 _auctionId) external;
      // 结束竞拍

@@ -21,16 +21,16 @@ contract NFTAuctionFactory is
     }
 
     function createAuction(
+        address _tokenAddress,
         address _nftAddress, 
         uint256 _tokenID, 
         uint256 _duration,
         // 起拍价
         uint256 _minBid) external returns (address) {
         // 使用代理模式创建新的NFTAuction合约实例
-        
         address proxy = address(new ERC1967Proxy(auctionImpl, 
         abi.encodeWithSelector(NFTAuction.initialize.selector, msg.sender,_nftAddress,_tokenID,_minBid, _duration)));
-        INFTAuction(proxy).createAuction(_nftAddress, _tokenID, _duration, _minBid);
+        INFTAuction(proxy).createAuction(_tokenAddress,_nftAddress, _tokenID, _duration, _minBid);
         allAuctions.push(proxy);
     }
 
