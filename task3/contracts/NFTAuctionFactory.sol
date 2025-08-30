@@ -32,6 +32,8 @@ contract NFTAuctionFactory is
         abi.encodeWithSelector(NFTAuction.initialize.selector, msg.sender,_nftAddress,_tokenID,_minBid, _duration)));
         INFTAuction(proxy).createAuction(_tokenAddress,_nftAddress, _tokenID, _duration, _minBid);
         allAuctions.push(proxy);
+
+        return proxy;
     }
 
     /// @dev 升级全局实现合约（仅 owner）
