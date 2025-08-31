@@ -17,6 +17,8 @@
 ```
 task3/
 ├── contracts/               # 智能合约源代码
+│   ├──interface/            # 接口文件
+│   ├──nft/                  # nft
 ├── deploy/                  # 部署脚本
 │   ├──.cache/                  # 缓存目录(自动生成)
 │   ├── 01_deploy_nft_auction.js        # NFT拍卖合约部署脚本   

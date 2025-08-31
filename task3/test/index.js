@@ -20,7 +20,7 @@ const { expect } = require("chai");
     const nafAutionProxy = await deployments.get("NFTAuctionPorxy");
 
     // 生产nft
-    const nftFactory = await ethers.getContractFactory("TestERC721");
+    const nftFactory = await ethers.getContractFactory("MyNFT");
     const nftContract = await nftFactory.deploy();
     await nftContract.waitForDeployment();
     const ipfsUri = "ipfs://bafkreia3swiryoznkfzpjp3ijxm2oko3xe65o257gj3e6b2h3igxwydlh4";
