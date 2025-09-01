@@ -6,7 +6,7 @@ module.exports = async ({ getNamedAccounts }) => {
   const { deployer } = await getNamedAccounts();
 
     /* 1. 读取缓存里的代理地址 */
-  const _NFTAuctionProxyObj = await deployments.get("NFTAuctionPorxy");
+  const _NFTAuctionProxyObj = await deployments.get("NFTAuctionProxy");
   const NFTAuctionProxy = _NFTAuctionProxyObj.address
   /* 2. 升级代理（OpenZeppelin 插件一次性完成） */
   const NFTAuctionV2 = await ethers.getContractFactory("NFTAuctionV2");
