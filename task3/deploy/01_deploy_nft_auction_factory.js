@@ -8,14 +8,15 @@ module.exports = async ({ getNamedAccounts }) => {
   console.log("部署用户地址:", deployer);
   console.log("部署 NFT 拍卖合约工厂...");
 
-  const [implAddress] = deployments.get("NFTAuctionPorxy");
+  const _NFTAuctionProxyObj = await deployments.get("NFTAuctionProxy");
+  const address = _NFTAuctionProxyObj.address;
 
   /* 1. 用 OpenZeppelin upgrades 插件部署 UUPS 代理 */
   const NFTAuctionFactory = await ethers.getContractFactory("NFTAuctionFactory");
   const proxy = await upgrades.deployProxy(
     NFTAuctionFactory,
     [
-      implAddress// NFT逻辑合约地址
+      address// NFT逻辑合约地址
     ],               // 构造函数参数
     { initializer: "initialize", kind: "uups" }
   );

@@ -14,7 +14,8 @@ console.log("impl address", ethers.getAddress("0x" + storage.slice(-40)));
 const { deployer } = await getNamedAccounts();
     /* 1. 读取缓存里的代理地址 */
   const _NFTAuctionProxyObj = await deployments.get("NFTAuctionFactoryProxy");
-  const NFTAuctionFactoryProxy = _NFTAuctionProxyObj.address
+  const NFTAuctionFactoryProxy = _NFTAuctionProxyObj.address;
+  
 
   /* 2. 升级代理（OpenZeppelin 插件一次性完成） */
   const NFTAuctionFactoryV2 = await ethers.getContractFactory("NFTAuctionFactoryV2");
