@@ -42,9 +42,7 @@ npx hardhat test
 
 ## 贡献与支持
 
-欢迎提交 Issue 或 Pull Request 改进项目。如有问题，请联系：  
-- 邮箱：your-email@example.com  
-- 社区：[Discord/Telegram 链接]
+欢迎提交 Issue 或 Pull Request 改进项目
 
 ## 许可证
 
