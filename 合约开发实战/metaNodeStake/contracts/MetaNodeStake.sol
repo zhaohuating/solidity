@@ -6,9 +6,10 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "hardhat/console.sol";
 
-contract MetaNodeStake is Initializable, AccessControlUpgradeable, UUPSUpgradeable {
+contract MetaNodeStake is Initializable, AccessControlUpgradeable, UUPSUpgradeable, ReentrancyGuard {
     using SafeERC20 for IERC20;
 
     bytes32 public constant UPGRADER_ROLE = keccak256("UPGRADER_ROLE");
@@ -95,12 +96,13 @@ contract MetaNodeStake is Initializable, AccessControlUpgradeable, UUPSUpgradeab
      * @dev 前置条件：质押功能未暂停，且质押金额满足最小要求
      * @dev 后置条件：更新用户质押状态和池的总质押量
      */
-    function stake(uint256 _pid, uint256 _amount) external poolExists(_pid) whenStakeNotPaused() payable {
+    function stake(uint256 _pid, uint256 _amount) external poolExists(_pid) whenStakeNotPaused() nonReentrant() payable {
         require(_amount > 0, "Amount must be greater than zero");
         require(_amount >= pools[_pid].minDepositAmount, "Amount below minimum deposit");
 
         Pool storage pool = pools[_pid];
         User storage user = users[_pid][msg.sender];
+        updatePool(_pid);
         // 计算并累加未领取的奖励
         if (user.stAmount > 0) {
             uint256 pending = user.stAmount * pool.accMetaNodePerST / ST_TOKEN_SIZE - user.finishedMetaNode;
@@ -129,7 +131,7 @@ contract MetaNodeStake is Initializable, AccessControlUpgradeable, UUPSUpgradeab
      * @dev 前置条件：解除质押功能未暂停，且用户质押数量足够
      * @dev 后置条件：记录解除质押请求，等待锁定期结束后可提取
      */
-    function unstake(uint256 _pid, uint256 _amount) external {
+    function unstake(uint256 _pid, uint256 _amount) external nonReentrant() poolExists(_pid) {
         require(!unstakePaused, "Unstaking is paused");
         User storage user = users[_pid][msg.sender];
         require(user.stAmount >= _amount, "Insufficient staked amount");
@@ -163,7 +165,7 @@ contract MetaNodeStake is Initializable, AccessControlUpgradeable, UUPSUpgradeab
      * @dev 前置条件：领取功能未暂停，且有可领取的奖励
      * @dev 后置条件：清除用户的待领取奖励记录
      */
-    function claim(uint256 _pid) external {
+    function claim(uint256 _pid) external nonReentrant() poolExists(_pid) {
         require(!claimPaused, "Claiming is paused");
         User storage user = users[_pid][msg.sender];
         uint256 pendingMetaNode = user.pendingMetaNode;
@@ -195,16 +197,18 @@ contract MetaNodeStake is Initializable, AccessControlUpgradeable, UUPSUpgradeab
             unstakeLockedBlocks: _unstakeLockedBlocks
         }));
 
+        totalWeights += _poolWeight;
         emit PoolAdded(pools.length - 1, _stTokenAddress, _poolWeight, _minDepositAmount, _unstakeLockedBlocks);
     }
 
-    function updatePool(
+    function updatePoolSetting(
         uint256 _pid,
         uint256 _poolWeight,
         uint256 _minDepositAmount,
         uint256 _unstakeLockedBlocks
     ) external onlyRole(ADMIN_ROLE) {
         Pool storage pool = pools[_pid];
+        totalWeights = totalWeights - pool.poolWeight + _poolWeight;
         pool.poolWeight = _poolWeight;
         pool.minDepositAmount = _minDepositAmount;
         pool.unstakeLockedBlocks = _unstakeLockedBlocks;
@@ -212,20 +216,19 @@ contract MetaNodeStake is Initializable, AccessControlUpgradeable, UUPSUpgradeab
         emit PoolUpdated(_pid, _poolWeight, _minDepositAmount, _unstakeLockedBlocks);
     }
 
-    function updatePool(uint256 _pid) public {
-        Pool storage pool = pools[_pid];
-        if (block.number <= pool.lastRewardBlock) {
-            return;
-        }
+    function updatePool(uint256 _pid) private {
+        require(totalWeights > 0, "No active pools");
 
+        Pool storage pool = pools[_pid];
+        require(block.number >= pool.lastRewardBlock, "Pool is not ready");
         if (pool.stTokenAmount == 0) {
             pool.lastRewardBlock = block.number;
             return;
         }
 
         uint256 blocksPassed = block.number - pool.lastRewardBlock;
-        uint256 metaNodeReward = blocksPassed * pool.poolWeight;
-        pool.accMetaNodePerST += metaNodeReward *  ST_TOKEN_SIZE/ pool.stTokenAmount;
+        uint256 metaNodeReward = (blocksPassed * pool.poolWeight) / totalWeights;
+        pool.accMetaNodePerST += metaNodeReward * rewardPerBlock/ pool.stTokenAmount;
         pool.lastRewardBlock = block.number;
     }
 
