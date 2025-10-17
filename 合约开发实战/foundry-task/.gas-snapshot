@@ -1,0 +1,9 @@
+ArithmeticTest:test_Add() (gas: 57898)
+ArithmeticTest:test_DivideOptimized() (gas: 57956)
+ArithmeticTest:test_Multiply() (gas: 57940)
+ArithmeticTest:test_Subtract() (gas: 57947)
+
+ArithmeticOptimizedTest:test_AddOptimized() (gas: 57623)
+ArithmeticOptimizedTest:test_DivideOptimizedOptimized() (gas: 57707)
+ArithmeticOptimizedTest:test_MultiplyOptimized() (gas: 57559)
+ArithmeticOptimizedTest:test_SubtractOptimized() (gas: 57670)
