@@ -1,5 +1,5 @@
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+// SPDX-License-Identifier: MIT 
+pragma solidity ^0.8.28;
 
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
@@ -7,7 +7,7 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
-import "hardhat/console.sol";
+import {console} from "forge-std/Test.sol";
 
 contract MetaNodeStake is Initializable, AccessControlUpgradeable, UUPSUpgradeable, ReentrancyGuard {
     using SafeERC20 for IERC20;
@@ -135,7 +135,7 @@ contract MetaNodeStake is Initializable, AccessControlUpgradeable, UUPSUpgradeab
         require(!unstakePaused, "Unstaking is paused");
         User storage user = users[_pid][msg.sender];
         require(user.stAmount >= _amount, "Insufficient staked amount");
-        require(user.lastStakeBlock + pools[_pid].unstakeLockedBlocks >= block.number, "Unstake locked");
+        require(user.lastStakeBlock + pools[_pid].unstakeLockedBlocks <= block.number, "Unstake locked");
 
         Pool storage pool = pools[_pid];
         updatePool(_pid);
@@ -216,7 +216,7 @@ contract MetaNodeStake is Initializable, AccessControlUpgradeable, UUPSUpgradeab
         emit PoolUpdated(_pid, _poolWeight, _minDepositAmount, _unstakeLockedBlocks);
     }
 
-    function updatePool(uint256 _pid) private {
+    function updatePool(uint256 _pid) internal {
         require(totalWeights > 0, "No active pools");
 
         Pool storage pool = pools[_pid];
@@ -225,10 +225,9 @@ contract MetaNodeStake is Initializable, AccessControlUpgradeable, UUPSUpgradeab
             pool.lastRewardBlock = block.number;
             return;
         }
-
         uint256 blocksPassed = block.number - pool.lastRewardBlock;
         uint256 metaNodeReward = (blocksPassed * pool.poolWeight) / totalWeights;
-        pool.accMetaNodePerST += metaNodeReward * rewardPerBlock/ pool.stTokenAmount;
+        pool.accMetaNodePerST += (metaNodeReward * rewardPerBlock) / pool.stTokenAmount;
         pool.lastRewardBlock = block.number;
     }
 
